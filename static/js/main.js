@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cursorRing = document.querySelector('.cursor-ring');
     const loader = document.querySelector('.loader');
     const navbar = document.querySelector('.navbar');
+    let loaderLogoLoop = null;
 
     // ═══════════════════════════════════════════════════════════
     //  1. CUSTOM CURSOR
@@ -56,8 +57,53 @@ document.addEventListener('DOMContentLoaded', () => {
     // ═══════════════════════════════════════════════════════════
     //  2. LOADING SCREEN
     // ═══════════════════════════════════════════════════════════
+    function initLoaderLogoAnimation() {
+        if (!loader) return null;
+
+        const loaderLogo = loader.querySelector('.loader-logo');
+        if (!loaderLogo) return null;
+
+        const text = (loaderLogo.textContent || '').trim() || 'NEXUS';
+        loaderLogo.innerHTML = text
+            .split('')
+            .map((char) => `<span class="loader-letter">${char}</span>`)
+            .join('');
+
+        const letters = loaderLogo.querySelectorAll('.loader-letter');
+        gsap.set(letters, {
+            opacity: 0,
+            y: 22,
+            filter: 'blur(8px)',
+        });
+
+        return gsap.timeline({ repeat: -1, repeatDelay: 0.12 })
+            .to(letters, {
+                opacity: 1,
+                y: 0,
+                filter: 'blur(0px)',
+                duration: 0.34,
+                stagger: 0.055,
+                ease: 'power3.out',
+            })
+            .to(letters, {
+                opacity: 0.22,
+                duration: 0.32,
+                stagger: { each: 0.05, from: 'end' },
+                ease: 'power2.inOut',
+            }, '+=0.2')
+            .to(letters, {
+                opacity: 0,
+                y: -12,
+                filter: 'blur(6px)',
+                duration: 0.38,
+                stagger: 0.045,
+                ease: 'power2.in',
+            }, '+=0.04');
+    }
+
     if (loader) {
         const loaderFill = loader.querySelector('.loader-bar-fill');
+        loaderLogoLoop = initLoaderLogoAnimation();
         const tl = gsap.timeline({
             onComplete: () => {
                 gsap.to(loader, {
@@ -65,6 +111,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     duration: 0.8,
                     ease: 'power4.inOut',
                     onComplete: () => {
+                        if (loaderLogoLoop) {
+                            loaderLogoLoop.kill();
+                            loaderLogoLoop = null;
+                        }
                         loader.style.display = 'none';
                         heroEntrance();
                     }
@@ -111,48 +161,177 @@ document.addEventListener('DOMContentLoaded', () => {
             y: 0,
             duration: 0.8,
         }, '-=0.8')
-        // Animated NEXUS logo entrance — letters fly in staggered
-        .from('.logo-letter', {
-            y: -30,
-            opacity: 0,
-            rotateX: 90,
-            scale: 0.3,
-            duration: 0.7,
-            stagger: 0.08,
-            ease: 'back.out(1.7)',
-            onComplete: () => {
-                // Start continuous idle animation after entrance
-                initLogoIdleAnimation();
-            }
+        // Animated NEXUS logo entrance — stroke drawing
+        .add(() => {
+            initLogoDrawAnimation();
         }, '-=0.5');
     }
 
     // ═══════════════════════════════════════════════════════════
-    //  3b. NEXUS LOGO — Continuous Idle Animation
+    //  3b. NEXUS LOGO — Stroke Draw + Brutal Scroll Morph
     // ═══════════════════════════════════════════════════════════
-    function initLogoIdleAnimation() {
-        const letters = document.querySelectorAll('.logo-letter');
-        if (!letters.length) return;
+    function initLogoDrawAnimation() {
+        const navLogo = document.getElementById('navLogo');
+        if (!navLogo || navLogo.dataset.drawReady === '1') return;
 
-        letters.forEach((letter, i) => {
-            // Continuous subtle bounce per letter
-            gsap.to(letter, {
-                y: -2 + Math.random() * -2,
-                duration: 1.5 + Math.random() * 1,
-                yoyo: true,
-                repeat: -1,
-                ease: 'sine.inOut',
-                delay: i * 0.15,
+        const softPath = navLogo.querySelector('.logo-path-soft');
+        const hardPath = navLogo.querySelector('.logo-path-hard');
+        const shimmer = navLogo.querySelector('.logo-shimmer');
+        const displace = navLogo.querySelector('#nexusDisplace');
+        const noise = navLogo.querySelector('#nexusNoise');
+
+        if (!softPath || !hardPath) return;
+        navLogo.dataset.drawReady = '1';
+
+        const setupStrokeDraw = (path, baseOpacity) => {
+            const length = path.getTotalLength();
+            gsap.set(path, {
+                strokeDasharray: length,
+                strokeDashoffset: length,
+                opacity: baseOpacity,
             });
+            return length;
+        };
 
-            // Periodic rotation nudge every few seconds
-            gsap.to(letter, {
-                rotation: (i % 2 === 0 ? 2 : -2),
-                duration: 2 + Math.random(),
+        const softLength = setupStrokeDraw(softPath, 1);
+        const hardLength = setupStrokeDraw(hardPath, 0.02);
+
+        gsap.set(navLogo, {
+            transformPerspective: 1200,
+            transformStyle: 'preserve-3d',
+            transformOrigin: '50% 50%',
+        });
+
+        if (shimmer) {
+            gsap.set(shimmer, {
+                xPercent: -180,
+                opacity: 0,
+            });
+        }
+
+        const drawLoop = gsap.timeline({
+            repeat: -1,
+            repeatDelay: 0.12,
+            defaults: { ease: 'power2.inOut' },
+        });
+
+        drawLoop
+            .to(softPath, {
+                strokeDashoffset: 0,
+                opacity: 1,
+                duration: 2.2,
+            })
+            .to(hardPath, {
+                strokeDashoffset: 0,
+                opacity: 0.78,
+                duration: 1.25,
+                ease: 'power2.out',
+            }, '-=1.2')
+            .to(softPath, {
+                strokeWidth: 7.8,
+                duration: 0.34,
                 yoyo: true,
-                repeat: -1,
+                repeat: 1,
                 ease: 'sine.inOut',
-                delay: i * 0.2,
+            }, '-=0.75');
+
+        if (shimmer) {
+            drawLoop
+                .fromTo(shimmer, {
+                    xPercent: -180,
+                    opacity: 0,
+                }, {
+                    xPercent: 220,
+                    opacity: 0.72,
+                    duration: 1.05,
+                    ease: 'power2.out',
+                }, '-=1.45')
+                .to(shimmer, {
+                    opacity: 0,
+                    duration: 0.35,
+                    ease: 'power1.out',
+                }, '-=0.08');
+        }
+
+        if (displace) {
+            const distortion = { value: 0 };
+            drawLoop
+                .to(distortion, {
+                    value: 10,
+                    duration: 0.4,
+                    ease: 'sine.out',
+                    onUpdate: () => {
+                        displace.setAttribute('scale', distortion.value.toFixed(2));
+                    }
+                }, '-=1.1')
+                .to(distortion, {
+                    value: 0,
+                    duration: 0.55,
+                    ease: 'sine.inOut',
+                    onUpdate: () => {
+                        displace.setAttribute('scale', distortion.value.toFixed(2));
+                    }
+                });
+        }
+
+        if (noise) {
+            const turbulence = { value: 0.006 };
+            drawLoop
+                .to(turbulence, {
+                    value: 0.012,
+                    duration: 0.4,
+                    ease: 'sine.out',
+                    onUpdate: () => {
+                        noise.setAttribute('baseFrequency', turbulence.value.toFixed(4));
+                    }
+                }, '<')
+                .to(turbulence, {
+                    value: 0.006,
+                    duration: 0.55,
+                    ease: 'sine.inOut',
+                    onUpdate: () => {
+                        noise.setAttribute('baseFrequency', turbulence.value.toFixed(4));
+                    }
+                });
+        }
+
+        drawLoop
+            .to(hardPath, {
+                strokeDashoffset: hardLength,
+                opacity: 0.06,
+                duration: 1.9,
+            }, '+=0.08')
+            .to(softPath, {
+                strokeDashoffset: softLength,
+                opacity: 0.2,
+                duration: 1.9,
+            }, '<')
+            .set(softPath, { opacity: 1 })
+            .set(hardPath, { opacity: 0.02 });
+
+        navLogo.addEventListener('mousemove', (event) => {
+            if (window.innerWidth <= 768) return;
+
+            const rect = navLogo.getBoundingClientRect();
+            const relX = (event.clientX - rect.left) / rect.width - 0.5;
+            const relY = (event.clientY - rect.top) / rect.height - 0.5;
+
+            gsap.to(navLogo, {
+                rotateY: relX * 14,
+                rotateX: relY * -10,
+                duration: 0.35,
+                ease: 'power3.out',
+                overwrite: 'auto',
+            });
+        });
+
+        navLogo.addEventListener('mouseleave', () => {
+            gsap.to(navLogo, {
+                rotateX: 0,
+                rotateY: 0,
+                duration: 0.6,
+                ease: 'power3.out',
+                overwrite: 'auto',
             });
         });
     }

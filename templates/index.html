@@ -61,21 +61,35 @@
     <div class="cursor-ring"></div>
 
     <!-- ═══ BACKGROUND BLOBS ═══ -->
+    <!-- ═══ NAVIGATION ═══ -->
     <div class="bg-blobs">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
         <div class="blob blob-3"></div>
     </div>
 
-    <!-- ═══ NAVIGATION ═══ -->
     <nav class="navbar" id="navbar">
         <a href="#hero" class="nav-logo magnetic" data-strength="0.15" id="navLogo">
-            <span class="logo-letter" data-letter="N">N</span>
-            <span class="logo-letter" data-letter="E">E</span>
-            <span class="logo-letter" data-letter="X">X</span>
-            <span class="logo-letter" data-letter="U">U</span>
-            <span class="logo-letter" data-letter="S">S</span>
-            <span class="logo-shimmer"></span>
+            <svg class="nexus-draw-logo" viewBox="0 0 460 130" role="img" aria-label="NEXUS">
+                <defs>
+                    <linearGradient id="nexusSoftGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#6c63ff"></stop>
+                        <stop offset="45%" stop-color="#00d4aa"></stop>
+                        <stop offset="100%" stop-color="#ff6b9d"></stop>
+                    </linearGradient>
+                    <linearGradient id="nexusHardGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#ff4d88"></stop>
+                        <stop offset="55%" stop-color="#ff9f43"></stop>
+                        <stop offset="100%" stop-color="#ffd166"></stop>
+                    </linearGradient>
+                    <filter id="nexusHardFilter" x="-25%" y="-25%" width="150%" height="150%">
+                        <feTurbulence id="nexusNoise" type="fractalNoise" baseFrequency="0.006" numOctaves="1" seed="7" result="noise"></feTurbulence>
+                        <feDisplacementMap id="nexusDisplace" in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+                    </filter>
+                </defs>
+                <path class="logo-path logo-path-soft" d="M18 102 L18 20 L72 102 L72 20 M104 20 L168 20 M104 20 L104 102 M104 61 L160 61 M104 102 L168 102 M194 20 L258 102 M258 20 L194 102 M282 20 L282 82 Q282 102 304 102 L340 102 Q362 102 362 82 L362 20 M446 34 Q432 20 412 20 Q392 20 388 36 Q384 52 402 58 Q420 64 430 70 Q446 80 440 94 Q434 110 412 110 Q392 110 382 96"></path>
+                <path class="logo-path logo-path-hard" d="M18 102 L18 20 L72 102 L72 20 M104 20 L168 20 M104 20 L104 102 M104 61 L160 61 M104 102 L168 102 M194 20 L258 102 M258 20 L194 102 M282 20 L282 82 Q282 102 304 102 L340 102 Q362 102 362 82 L362 20 M446 34 Q432 20 412 20 Q392 20 388 36 Q384 52 402 58 Q420 64 430 70 Q446 80 440 94 Q434 110 412 110 Q392 110 382 96"></path>
+            </svg>
         </a>
         <ul class="nav-links">
             <li><a href="#about" class="magnetic" data-strength="0.2">About</a></li>
