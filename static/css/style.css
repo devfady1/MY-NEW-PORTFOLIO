@@ -472,6 +472,27 @@ section {
     transform: translateY(110%);
 }
 
+/* ── Animated "Nexus Code" Text ───────────────────────────── */
+.nexus-code-animated {
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+    background: linear-gradient(
+        135deg,
+        #6c63ff,
+        #00d4aa
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: nexusBreathe 3s ease-in-out infinite;
+}
+
+@keyframes nexusBreathe {
+    0%, 100% { letter-spacing: 0em; transform: scale(1); }
+    50%      { letter-spacing: 0.04em; transform: scale(1.03); }
+}
+
 .hero-subtitle {
     max-width: 550px;
     margin-bottom: 3rem;
@@ -955,6 +976,24 @@ section {
 
 .project-card-links a:hover {
     color: var(--accent);
+}
+
+.project-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.view-project-link {
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+    letter-spacing: 0.02em;
+}
+
+.project-card:hover .view-project-link {
+    letter-spacing: 0.06em;
 }
 
 /* 3D tilt effect on project cards */

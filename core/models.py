@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils.text import slugify
 
 
 class Skill(models.Model):
@@ -37,7 +38,12 @@ class Project(models.Model):
     """Portfolio project displayed in the work section."""
 
     title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=220, unique=True, blank=True)
     description = models.TextField()
+    full_description = models.TextField(
+        blank=True,
+        help_text="Detailed description shown on the project detail page"
+    )
     image = models.ImageField(upload_to='projects/', blank=True, null=True)
     url = models.URLField(blank=True, help_text="Live project URL")
     github_url = models.URLField(blank=True, help_text="GitHub repository URL")
@@ -47,6 +53,7 @@ class Project(models.Model):
     )
     featured = models.BooleanField(default=False)
     order = models.IntegerField(default=0)
+    created_date = models.DateField(blank=True, null=True, help_text="When the project was completed")
 
     class Meta:
         ordering = ['order', '-featured', 'title']
@@ -54,9 +61,39 @@ class Project(models.Model):
     def __str__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+            # Ensure unique slug
+            original_slug = self.slug
+            counter = 1
+            while Project.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
+        super().save(*args, **kwargs)
+
     def tech_list(self):
         """Return tech stack as a list."""
         return [t.strip() for t in self.tech_stack.split(',') if t.strip()]
+
+
+class ProjectImage(models.Model):
+    """Additional images for a project, displayed in the detail gallery."""
+
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name='images'
+    )
+    image = models.ImageField(upload_to='projects/gallery/')
+    caption = models.CharField(max_length=300, blank=True)
+    order = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f"{self.project.title} — Image {self.order}"
 
 
 class Review(models.Model):

@@ -1,6 +1,6 @@
 import json
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 
 from .models import Skill, Project, Review, Contact
@@ -14,6 +14,18 @@ def index(request):
         'reviews': Review.objects.all(),
     }
     return render(request, 'index.html', context)
+
+
+def project_detail(request, slug):
+    """Render the project detail page with full gallery."""
+    project = get_object_or_404(Project, slug=slug)
+    gallery_images = project.images.all()
+
+    context = {
+        'project': project,
+        'gallery_images': gallery_images,
+    }
+    return render(request, 'project_detail.html', context)
 
 
 @require_POST

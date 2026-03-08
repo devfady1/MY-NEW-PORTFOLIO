@@ -119,7 +119,7 @@
             <h1 class="fluid-h1 hero-title">
                 <span class="line"><span class="line-inner">Hi, I'm Fady</span></span>
                 <span class="line"><span class="line-inner">Ashraf<span style="color: var(--accent);">.</span></span></span>
-                <span class="line"><span class="line-inner" style="font-size:0.55em; color: var(--text-secondary); font-weight:400;">Founder of <span style="background: var(--gradient-main); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight:700;">Nexus Code</span></span></span>
+                <span class="line"><span class="line-inner" style="font-size:0.55em; color: var(--text-secondary); font-weight:400;">Founder of <span class="nexus-code-animated">Nexus Code</span></span></span>
             </h1>
 
             <p class="fluid-body hero-subtitle">
@@ -265,6 +265,7 @@
 
         <div class="projects-grid">
             {% for project in projects %}
+            <a href="{% url 'core:project_detail' project.slug %}" class="project-card-link">
             <div class="project-card">
                 <div class="project-card-image">
                     {% if project.image %}
@@ -282,15 +283,11 @@
                         {% endfor %}
                     </div>
                     <div class="project-card-links">
-                        {% if project.url %}
-                            <a href="{{ project.url }}" target="_blank" rel="noopener">Live ↗</a>
-                        {% endif %}
-                        {% if project.github_url %}
-                            <a href="{{ project.github_url }}" target="_blank" rel="noopener">GitHub ↗</a>
-                        {% endif %}
+                        <span class="view-project-link">View Project →</span>
                     </div>
                 </div>
             </div>
+            </a>
             {% empty %}
             <div class="scroll-reveal" style="grid-column: 1 / -1; text-align:center; padding:4rem;">
                 <p class="fluid-body">Projects coming soon.</p>
@@ -364,17 +361,25 @@
                     Drop me a message and I'll get back to you within 24 hours.
                 </p>
                 <div class="contact-links">
-                    <a href="mailto:hello@nexuscode.dev" class="contact-link magnetic" data-strength="0.2">
+                    <a href="mailto:fadya5323@gmail.com" class="contact-link magnetic" data-strength="0.2">
                         <span class="link-icon">✉️</span>
-                        hello@nexuscode.dev
+                        fadya5323@gmail.com
                     </a>
-                    <a href="#" class="contact-link magnetic" data-strength="0.2">
+                    <a href="https://wa.me/201069476417" target="_blank" rel="noopener" class="contact-link magnetic" data-strength="0.2">
+                        <span class="link-icon">📱</span>
+                        01069476417
+                    </a>
+                    <a href="https://wa.me/201551954315" target="_blank" rel="noopener" class="contact-link magnetic" data-strength="0.2">
+                        <span class="link-icon">📱</span>
+                        01551954315
+                    </a>
+                    <a href="https://linkedin.com/in/fady-ashraf-161a58381" target="_blank" rel="noopener" class="contact-link magnetic" data-strength="0.2">
                         <span class="link-icon">🔗</span>
-                        linkedin.com/in/fadyashraf
+                        linkedin.com/in/fady-ashraf
                     </a>
-                    <a href="#" class="contact-link magnetic" data-strength="0.2">
+                    <a href="https://github.com/devfady1" target="_blank" rel="noopener" class="contact-link magnetic" data-strength="0.2">
                         <span class="link-icon">🐙</span>
-                        github.com/fadyashraf
+                        github.com/devfady1
                     </a>
                 </div>
             </div>

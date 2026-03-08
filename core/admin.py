@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import Skill, Project, Review, Contact
+from .models import Skill, Project, ProjectImage, Review, Contact
+
+
+class ProjectImageInline(admin.TabularInline):
+    model = ProjectImage
+    extra = 3
+    fields = ('image', 'caption', 'order')
 
 
 @admin.register(Skill)
@@ -12,10 +18,23 @@ class SkillAdmin(admin.ModelAdmin):
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('title', 'tech_stack', 'featured', 'order')
+    list_display = ('title', 'slug', 'tech_stack', 'featured', 'order')
     list_editable = ('featured', 'order')
     list_filter = ('featured',)
     search_fields = ('title', 'description')
+    prepopulated_fields = {'slug': ('title',)}
+    inlines = [ProjectImageInline]
+    fieldsets = (
+        (None, {
+            'fields': ('title', 'slug', 'description', 'full_description', 'image')
+        }),
+        ('Links', {
+            'fields': ('url', 'github_url')
+        }),
+        ('Details', {
+            'fields': ('tech_stack', 'featured', 'order', 'created_date')
+        }),
+    )
 
 
 @admin.register(Review)

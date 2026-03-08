@@ -1,0 +1,270 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>{{ project.title }} — Nexus Code</title>
+    <meta name="description" content="{{ project.description|truncatewords:30 }}">
+    <meta name="author" content="Fady Ashraf">
+    <meta name="theme-color" content="#050505">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        nexus: {
+                            bg: '#050505',
+                            card: 'rgba(255,255,255,0.03)',
+                            accent: '#6c63ff',
+                            secondary: '#00d4aa',
+                            tertiary: '#ff6b9d',
+                        },
+                    },
+                    fontFamily: {
+                        display: ['"Space Grotesk"', 'sans-serif'],
+                        body: ['"Inter"', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/project_detail.css' %}">
+</head>
+<body class="project-detail-body">
+
+    <!-- ═══ NAVIGATION ═══ -->
+    <nav class="navbar scrolled" id="navbar" style="opacity:1;">
+        <a href="{% url 'core:index' %}#work" class="nav-logo" id="navLogo">
+            <svg class="nexus-draw-logo" viewBox="0 0 460 130" role="img" aria-label="NEXUS">
+                <defs>
+                    <linearGradient id="nexusSoftGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#6c63ff"></stop>
+                        <stop offset="45%" stop-color="#00d4aa"></stop>
+                        <stop offset="100%" stop-color="#ff6b9d"></stop>
+                    </linearGradient>
+                </defs>
+                <path class="logo-path logo-path-soft" style="stroke-dasharray:none;stroke-dashoffset:0;opacity:1;" d="M18 102 L18 20 L72 102 L72 20 M104 20 L168 20 M104 20 L104 102 M104 61 L160 61 M104 102 L168 102 M194 20 L258 102 M258 20 L194 102 M282 20 L282 82 Q282 102 304 102 L340 102 Q362 102 362 82 L362 20 M446 34 Q432 20 412 20 Q392 20 388 36 Q384 52 402 58 Q420 64 430 70 Q446 80 440 94 Q434 110 412 110 Q392 110 382 96"></path>
+            </svg>
+        </a>
+        <a href="{% url 'core:index' %}#work" class="back-link">
+            <span class="back-arrow">←</span>
+            Back to Projects
+        </a>
+    </nav>
+
+    <!-- ═══ PROJECT HERO ═══ -->
+    <section class="project-hero">
+        <div class="project-hero-content">
+            <div class="project-meta-row">
+                {% if project.created_date %}
+                <span class="project-date">{{ project.created_date|date:"F Y" }}</span>
+                {% endif %}
+                {% if project.featured %}
+                <span class="project-featured-badge">⭐ Featured</span>
+                {% endif %}
+            </div>
+
+            <h1 class="fluid-h1 project-title">{{ project.title }}</h1>
+
+            <div class="project-tech-tags detail-tags">
+                {% for tech in project.tech_list %}
+                    <span class="tech-tag">{{ tech }}</span>
+                {% endfor %}
+            </div>
+
+            <p class="fluid-body project-hero-desc">{{ project.description }}</p>
+
+            <div class="project-actions">
+                {% if project.url %}
+                <a href="{{ project.url }}" target="_blank" rel="noopener" class="btn btn-primary">
+                    View Live <span class="btn-icon">↗</span>
+                </a>
+                {% endif %}
+                {% if project.github_url %}
+                <a href="{{ project.github_url }}" target="_blank" rel="noopener" class="btn btn-outline">
+                    GitHub <span class="btn-icon">↗</span>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ COVER IMAGE ═══ -->
+    {% if project.image %}
+    <section class="project-cover-section">
+        <div class="project-cover-wrap">
+            <img src="{{ project.image.url }}" alt="{{ project.title }}" class="project-cover-img" loading="lazy">
+            <div class="watermark">NEXUS CODE</div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- ═══ FULL DESCRIPTION ═══ -->
+    {% if project.full_description %}
+    <section class="project-description-section">
+        <div class="description-card">
+            <h2 class="fluid-h2">About This Project</h2>
+            <div class="description-text fluid-body">
+                {{ project.full_description|linebreaks }}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- ═══ IMAGE GALLERY ═══ -->
+    {% if gallery_images %}
+    <section class="project-gallery-section">
+        <h2 class="fluid-h2 gallery-title">Project Gallery</h2>
+        <div class="gallery-grid">
+            {% for img in gallery_images %}
+            <div class="gallery-item" data-index="{{ forloop.counter0 }}">
+                <img src="{{ img.image.url }}" alt="{{ img.caption|default:project.title }}" loading="lazy">
+                <div class="watermark">NEXUS CODE</div>
+                {% if img.caption %}
+                <div class="gallery-caption">{{ img.caption }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- ═══ LIGHTBOX MODAL ═══ -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightboxClose" aria-label="Close">✕</button>
+        <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous">‹</button>
+        <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next">›</button>
+        <div class="lightbox-content">
+            <img id="lightboxImg" src="" alt="">
+            <div class="watermark watermark-lightbox">NEXUS CODE</div>
+            <div class="lightbox-caption" id="lightboxCaption"></div>
+        </div>
+        <div class="lightbox-counter" id="lightboxCounter"></div>
+    </div>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="footer">
+        <div class="footer-brand">NEXUS CODE</div>
+        <p>© 2025 Fady Ashraf — All rights reserved.</p>
+        <div class="footer-links">
+            <a href="{% url 'core:index' %}">Home</a>
+            <a href="{% url 'core:index' %}#work">Work</a>
+            <a href="{% url 'core:index' %}#contact">Contact</a>
+        </div>
+    </footer>
+
+    <!-- ═══ SCRIPTS ═══ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // ── ENTRANCE ANIMATIONS ──
+        gsap.from('.project-hero-content', {
+            y: 40, opacity: 0, duration: 1, ease: 'power4.out'
+        });
+
+        gsap.from('.project-cover-wrap', {
+            y: 60, opacity: 0, duration: 1, delay: 0.2, ease: 'power3.out'
+        });
+
+        gsap.from('.description-card', {
+            y: 40, opacity: 0, duration: 0.8, delay: 0.3, ease: 'power3.out',
+            scrollTrigger: null
+        });
+
+        // Gallery items stagger
+        document.querySelectorAll('.gallery-item').forEach((item, i) => {
+            gsap.from(item, {
+                y: 50, opacity: 0, duration: 0.7, delay: 0.1 + i * 0.1,
+                ease: 'power3.out'
+            });
+        });
+
+        // ── LIGHTBOX ──
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const lightboxCaption = document.getElementById('lightboxCaption');
+        const lightboxCounter = document.getElementById('lightboxCounter');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        let currentIndex = 0;
+
+        function openLightbox(index) {
+            currentIndex = index;
+            updateLightbox();
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function updateLightbox() {
+            const item = galleryItems[currentIndex];
+            if (!item) return;
+            const img = item.querySelector('img');
+            const caption = item.querySelector('.gallery-caption');
+            lightboxImg.src = img.src;
+            lightboxImg.alt = img.alt;
+            lightboxCaption.textContent = caption ? caption.textContent : '';
+            lightboxCounter.textContent = `${currentIndex + 1} / ${galleryItems.length}`;
+        }
+
+        function nextImage() {
+            currentIndex = (currentIndex + 1) % galleryItems.length;
+            updateLightbox();
+        }
+
+        function prevImage() {
+            currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+            updateLightbox();
+        }
+
+        galleryItems.forEach((item, i) => {
+            item.addEventListener('click', () => openLightbox(i));
+        });
+
+        document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+        document.getElementById('lightboxNext').addEventListener('click', nextImage);
+        document.getElementById('lightboxPrev').addEventListener('click', prevImage);
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowRight') nextImage();
+            if (e.key === 'ArrowLeft') prevImage();
+        });
+
+        // Touch support for lightbox
+        let touchStartX = 0;
+        lightbox.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        lightbox.addEventListener('touchend', (e) => {
+            const diff = e.changedTouches[0].screenX - touchStartX;
+            if (Math.abs(diff) > 60) {
+                diff > 0 ? prevImage() : nextImage();
+            }
+        });
+    });
+    </script>
+
+</body>
+</html>
