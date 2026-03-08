@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['engfady.pythonanywhere.com','*']
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -118,6 +119,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Media files (user uploads)
@@ -128,3 +130,67 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ── Jazzmin Admin Theme ────────────────────────────────────
+JAZZMIN_SETTINGS = {
+    'site_title': 'Nexus Code Admin',
+    'site_header': 'Nexus Code',
+    'site_brand': 'Nexus Code',
+    'welcome_sign': 'Welcome to Nexus Code Admin',
+    'copyright': 'Nexus Code — Fady Ashraf',
+    'search_model': ['core.Project', 'core.Contact'],
+    'topmenu_links': [
+        {'name': 'Home', 'url': 'core:index', 'permissions': ['auth.view_user']},
+        {'model': 'core.Project'},
+        {'model': 'core.Contact'},
+    ],
+    'show_sidebar': True,
+    'navigation_expanded': True,
+    'icons': {
+        'auth': 'fas fa-users-cog',
+        'auth.user': 'fas fa-user',
+        'auth.Group': 'fas fa-users',
+        'core.Skill': 'fas fa-code',
+        'core.Project': 'fas fa-project-diagram',
+        'core.ProjectImage': 'fas fa-images',
+        'core.Review': 'fas fa-star',
+        'core.Contact': 'fas fa-envelope',
+    },
+    'default_icon_parents': 'fas fa-folder',
+    'default_icon_children': 'fas fa-circle',
+    'related_modal_active': True,
+    'use_google_fonts_cdn': True,
+    'changeform_format': 'horizontal_tabs',
+}
+
+JAZZMIN_UI_TWEAKS = {
+    'navbar_small_text': False,
+    'footer_small_text': False,
+    'body_small_text': False,
+    'brand_small_text': False,
+    'brand_colour': 'navbar-dark',
+    'accent': 'accent-primary',
+    'navbar': 'navbar-dark navbar-primary',
+    'no_navbar_border': True,
+    'navbar_fixed': True,
+    'layout_boxed': False,
+    'footer_fixed': False,
+    'sidebar_fixed': True,
+    'sidebar': 'sidebar-dark-primary',
+    'sidebar_nav_small_text': False,
+    'sidebar_disable_expand': False,
+    'sidebar_nav_child_indent': True,
+    'sidebar_nav_compact_style': False,
+    'sidebar_nav_legacy_style': False,
+    'sidebar_nav_flat_style': False,
+    'theme': 'darkly',
+    'dark_mode_theme': 'darkly',
+    'button_classes': {
+        'primary': 'btn-primary',
+        'secondary': 'btn-secondary',
+        'info': 'btn-info',
+        'warning': 'btn-warning',
+        'danger': 'btn-danger',
+        'success': 'btn-success',
+    },
+}
