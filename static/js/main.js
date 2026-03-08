@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const drawLoop = gsap.timeline({
-            repeat: -1,
+            repeat: window.innerWidth > 768 ? -1 : 0,
             repeatDelay: 0.12,
             defaults: { ease: 'power2.inOut' },
         });
@@ -464,11 +464,11 @@ document.addEventListener('DOMContentLoaded', () => {
     //  7. SCROLL VELOCITY SKEW
     // ═══════════════════════════════════════════════════════════
     let skewSetter = gsap.quickSetter('.skew-on-scroll', 'skewY', 'deg');
-    let clamp = gsap.utils.clamp(-3, 3);
+    let clamp = gsap.utils.clamp(-2, 2);
 
     ScrollTrigger.create({
         onUpdate: (self) => {
-            const skew = clamp(self.getVelocity() / -300);
+            const skew = clamp(self.getVelocity() / -500);
             skewSetter(skew);
         }
     });
@@ -479,16 +479,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // ═══════════════════════════════════════════════════════════
     //  8. SKILLS SECTION — Floating Animation
     // ═══════════════════════════════════════════════════════════
+    const isMobile = window.innerWidth <= 768;
+
     gsap.utils.toArray('.skill-node').forEach((node, i) => {
-        // Gentle floating
-        gsap.to(node, {
-            y: '+=12',
-            duration: 2 + Math.random() * 1.5,
-            yoyo: true,
-            repeat: -1,
-            ease: 'sine.inOut',
-            delay: i * 0.2,
-        });
+        // Gentle floating — desktop only (too heavy on mobile)
+        if (!isMobile) {
+            gsap.to(node, {
+                y: '+=12',
+                duration: 2 + Math.random() * 1.5,
+                yoyo: true,
+                repeat: -1,
+                ease: 'sine.inOut',
+                delay: i * 0.2,
+            });
+        }
 
         // Fade in on scroll
         gsap.from(node, {

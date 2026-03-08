@@ -133,6 +133,7 @@ body {
     pointer-events: none;
     z-index: 0;
     overflow: hidden;
+    contain: layout style;
 }
 
 .blob {
@@ -141,6 +142,8 @@ body {
     filter: blur(80px);
     opacity: 0.12;
     animation: blobFloat 20s ease-in-out infinite alternate;
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 .blob-1 {
@@ -175,20 +178,16 @@ body {
 
 @keyframes blobFloat {
     0% {
-        transform: translate(0, 0) scale(1) rotate(0deg);
-        border-radius: 40% 60% 60% 40% / 60% 30% 70% 40%;
+        transform: translate3d(0, 0, 0) scale(1);
     }
     33% {
-        transform: translate(80px, -60px) scale(1.1) rotate(120deg);
-        border-radius: 60% 40% 30% 70% / 40% 60% 40% 60%;
+        transform: translate3d(40px, -30px, 0) scale(1.05);
     }
     66% {
-        transform: translate(-40px, 40px) scale(0.95) rotate(240deg);
-        border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+        transform: translate3d(-20px, 20px, 0) scale(0.97);
     }
     100% {
-        transform: translate(60px, -30px) scale(1.05) rotate(360deg);
-        border-radius: 50% 40% 60% 50% / 35% 55% 45% 65%;
+        transform: translate3d(30px, -15px, 0) scale(1.02);
     }
 }
 
@@ -197,7 +196,6 @@ section {
     position: relative;
     z-index: 1;
     padding: clamp(4rem, 10vh, 8rem) clamp(1.5rem, 5vw, 6rem);
-    will-change: transform;
 }
 
 .section-label {
@@ -630,6 +628,18 @@ section {
     background-clip: text;
     -webkit-text-fill-color: transparent;
     opacity: 0.15;
+}
+
+.about-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    transition: transform 0.6s ease;
+}
+
+.about-visual-card:hover .about-photo {
+    transform: scale(1.05);
 }
 
 .about-visual-card::before {
@@ -1382,6 +1392,31 @@ section {
     body { cursor: auto; }
     .cursor-dot, .cursor-ring { display: none; }
     * { cursor: auto !important; }
+
+    /* Performance: reduce blob sizes and blur on mobile */
+    .blob {
+        filter: blur(40px);
+        opacity: 0.08;
+    }
+    .blob-1 {
+        width: 250px;
+        height: 250px;
+    }
+    .blob-2 {
+        width: 180px;
+        height: 180px;
+    }
+    .blob-3 {
+        width: 220px;
+        height: 220px;
+    }
+
+    /* Disable orbit ring spinning on mobile */
+    .orbit-ring-1,
+    .orbit-ring-2,
+    .orbit-ring-3 {
+        animation: none;
+    }
 }
 
 @media (max-width: 480px) {
