@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const drawLoop = gsap.timeline({
-            repeat: window.innerWidth > 768 ? -1 : 0,
+            repeat: -1,
             repeatDelay: 0.12,
             defaults: { ease: 'power2.inOut' },
         });
